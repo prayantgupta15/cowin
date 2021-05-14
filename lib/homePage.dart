@@ -152,8 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _loadData() async {
     await CenterViewModel.getCentresByDistrict(
         distId: widget.districtId, date: widget.date);
-     await CenterViewModel.getCentresByPin(
-        pin: widget.pin, date: widget.date);
+    await CenterViewModel.getCentresByPin(pin: widget.pin, date: widget.date);
   }
 
   @override
@@ -183,8 +182,11 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             FutureBuilder(
-              future:widget.isPin?CenterViewModel.getCentresByPin(pin: widget.pin, date: widget.date): CenterViewModel.getCentresByDistrict(
-                  distId: widget.districtId, date: widget.date),
+              future: widget.isPin
+                  ? CenterViewModel.getCentresByPin(
+                      pin: widget.pin, date: widget.date)
+                  : CenterViewModel.getCentresByDistrict(
+                      distId: widget.districtId, date: widget.date),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   CentresModel cm = snapshot.data;
@@ -422,6 +424,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   header() {
+     List<String> weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      List<String> month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul','Aug','Sep','Oct','Nov','Dec'];
+    var ymd = widget.date.split('-').reversed.join('-');
+    DateTime dateTime = DateTime.parse(ymd);
+    // print(weekday[dateTime.weekday-1]+', '+dateTime.day.toString()+' '+ month[dateTime.month-1]);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -446,7 +453,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       fontSize: 40,
                       fontWeight: FontWeight.w500,
                     ))),
-            Text("Fri, 8 Mar",
+            Text(weekday[dateTime.weekday-1]+', '+dateTime.day.toString()+' '+ month[dateTime.month-1],
                 style: TextStyle(color: Colors.white, fontSize: 20)),
           ],
         ),
