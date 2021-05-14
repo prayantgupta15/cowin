@@ -105,10 +105,15 @@ class _InputScreenState extends State<InputScreen> {
               mode: Mode.MENU,
               items: StateViewModel.statesModel,
               maxHeight: 600,
-
               isFilteredOnline: true,
               showClearButton: true,
               showSearchBox: true,
+              // onFind: (text) {
+                
+              // },
+              filterFn: (item, query) {
+                return item.stateName.toLowerCase().startsWith(query.toLowerCase());
+              },
 
               // showSelectedItem: true,
 //                    label: 'District',
@@ -261,7 +266,9 @@ class _InputScreenState extends State<InputScreen> {
                     isFilteredOnline: true,
                     showClearButton: true,
                     showSearchBox: true,
-
+                   filterFn: (item, query) {
+                return item.districtName.toLowerCase().startsWith(query.toLowerCase());
+              },
                     // showSelectedItem: true,
 //                    label: 'District',
                     dropdownSearchDecoration: InputDecoration(
