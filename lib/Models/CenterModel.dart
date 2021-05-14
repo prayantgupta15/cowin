@@ -35,9 +35,9 @@ class CenterBlockModel {
     // @required this.long,
     // @required this.from,
     // @required this.to,
-    @required this.feeType,
+    // @required this.feeType,
     // @required this.vaccineFees,
-    @required this.sessions,
+    // @required this.sessions,
   });
 
   int centerId;
@@ -51,9 +51,9 @@ class CenterBlockModel {
   // double long;
   // String from;
   // String to;
-  String feeType;
+  // String feeType;
   // List<VaccineFee> vaccineFees;
-  List<Session> sessions;
+  // List<SessionModel> sessions;
 
   factory CenterBlockModel.fromJson(String str) => CenterBlockModel.fromMap(json.decode(str));
 
@@ -69,15 +69,17 @@ class CenterBlockModel {
         // long: json["long"] == null ? null : json["long"].toDouble(),
         // from: json["from"] == null ? null : json["from"],
         // to: json["to"] == null ? null : json["to"],
-        feeType: json["fee_type"] == null ? null : json["fee_type"],
-        sessions: json["sessions"] == null ? null : List<Session>.from(json["sessions"].map((x) => Session.fromMap(x))),
+        // feeType: json["fee_type"] == null ? null : json["fee_type"],
+        // sessions: json["sessions"] == null
+        //     ? null
+        //     : List<SessionModel>.from(json["sessions"].map((x) => SessionModel.fromMap(x))),
       );
 }
 
-class Session {
-  Session({
+class SessionModel {
+  SessionModel({
     @required this.sessionId,
-    @required this.date,
+    // @required this.date,
     @required this.availableCapacity,
     // @required this.availableCapacityDose1,
     // @required this.availableCapacityDose2,
@@ -87,7 +89,7 @@ class Session {
   });
 
   String sessionId;
-  String date;
+  // String date;
   int availableCapacity;
   // int availableCapacityDose1;
   // int availableCapacityDose2;
@@ -95,11 +97,11 @@ class Session {
   String vaccine;
   List<String> slots;
 
-  factory Session.fromJson(String str) => Session.fromMap(json.decode(str));
+  factory SessionModel.fromJson(String str) => SessionModel.fromMap(json.decode(str));
 
-  factory Session.fromMap(Map<String, dynamic> json) => Session(
+  factory SessionModel.fromMap(Map<String, dynamic> json) => SessionModel(
         sessionId: json["session_id"] == null ? null : json["session_id"],
-        date: json["date"] == null ? null : json["date"],
+        // date: json["date"] == null ? null : json["date"],
         availableCapacity: json["available_capacity"] == null ? null : json["available_capacity"],
         // availableCapacityDose1: json["available_capacity_dose1"] == null ? null : json["available_capacity_dose1"],
         // availableCapacityDose2: json["available_capacity_dose2"] == null ? null : json["available_capacity_dose2"],

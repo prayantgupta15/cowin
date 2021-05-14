@@ -174,7 +174,6 @@ class _InputScreenState extends State<InputScreen> {
                     searchBoxController: TextEditingController(text: ''),
                     mode: Mode.MENU,
                     items: DistrictViewModel.districts,
-
                     maxHeight: 500,
                     isFilteredOnline: true,
                     showClearButton: true,
@@ -213,6 +212,9 @@ class _InputScreenState extends State<InputScreen> {
                       CupertinoPageRoute(
                           builder: (context) => MyHomePage(
                                 stateName: selectedStateName,
+                                districtName: selectedDistName,
+                                stateId: selectedStateid,
+                                districtId: selectedDistId,
                               )));
                 },
               ),
@@ -241,25 +243,32 @@ class _InputScreenState extends State<InputScreen> {
 //                  // backgroundImage: NetworkImage(item.avatar ?? ''),
 //                  ),
         title: Text(item.districtName),
-        subtitle: Text(item.districtId.toString()),
+        subtitle: Text(item.districtId.toString() + "mk;lm"),
       ),
     );
   }
 
-  Widget _customPopupItemBuilderExample(BuildContext context, DistrictBlockModel item, bool isSelected) {
+  Widget _customPopupItemBuilderExample(
+    BuildContext context,
+    DistrictBlockModel item,
+    bool isSelected,
+  ) {
+    print(item.districtName + isSelected.toString());
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8),
-      decoration: !isSelected
-          ? null
-          : BoxDecoration(
-              border: Border.all(color: Theme.of(context).primaryColor),
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.white,
-            ),
+      decoration:
+          // !isSelected
+          //     ? null
+          //     :
+          BoxDecoration(
+        border: Border.all(color: Theme.of(context).primaryColor),
+        borderRadius: BorderRadius.circular(15),
+        color: Colors.red,
+      ),
       child: ListTile(
         visualDensity: VisualDensity(vertical: -4, horizontal: 0),
 //        dense: true,
-        selected: isSelected,
+//         selected: isSelected,
         isThreeLine: false,
         title: Text(item.districtName),
         subtitle: Text(item.districtId.toString()),
