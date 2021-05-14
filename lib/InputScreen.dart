@@ -18,10 +18,15 @@ class _InputScreenState extends State<InputScreen> {
   TextEditingController districtController = new TextEditingController();
 
   GlobalKey<AutoCompleteTextFieldState<StatesModel>> key = new GlobalKey();
-  GlobalKey<AutoCompleteTextFieldState<DistrictBlockModel>> key2 = new GlobalKey();
+  GlobalKey<AutoCompleteTextFieldState<DistrictBlockModel>> key2 =
+      new GlobalKey();
 
   String selectedStateid;
   String selectedStateName;
+  String selectedDate;
+  String selectDay;
+
+  List<String> weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   DistrictBlockModel districtBlockModel;
   String selectedDistName;
@@ -44,37 +49,77 @@ class _InputScreenState extends State<InputScreen> {
       child: Scaffold(
         body: Column(
           children: [
-            AutoCompleteTextField<StatesModel>(
-              controller: stateController,
-              clearOnSubmit: false,
-              key: key,
-              suggestions: StateViewModel.statesModel,
-              // StateViewModel.statesModel,
-              style: new TextStyle(color: Colors.black, fontSize: 16.0),
-              itemBuilder: (context, item) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      item.stateName,
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(15.0),
-                    ),
-                    Text(
-                      item.stateId.toString(),
-                    )
-                  ],
-                );
-              },
-              itemFilter: (item, query) {
-                return item.stateName.toLowerCase().startsWith(query.toLowerCase());
-              },
-              itemSorter: (a, b) {
-                return a.stateName.compareTo(b.stateName);
-              },
-              itemSubmitted: (item) async {
+            // AutoCompleteTextField<StatesModel>(
+            //   controller: stateController,
+            //   clearOnSubmit: false,
+            //   key: key,
+            //   suggestions: StateViewModel.statesModel,
+            //   // StateViewModel.statesModel,
+            //   style: new TextStyle(color: Colors.black, fontSize: 16.0),
+            //   itemBuilder: (context, item) {
+            //     return Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: <Widget>[
+            //         Text(
+            //           item.stateName,
+            //           style: TextStyle(fontSize: 16.0),
+            //         ),
+            //         Padding(
+            //           padding: EdgeInsets.all(15.0),
+            //         ),
+            //         Text(
+            //           item.stateId.toString(),
+            //         )
+            //       ],
+            //     );
+            //   },
+            //   itemFilter: (item, query) {
+            //     return item.stateName.toLowerCase().startsWith(query.toLowerCase());
+            //   },
+            //   itemSorter: (a, b) {
+            //     return a.stateName.compareTo(b.stateName);
+            //   },
+            //   itemSubmitted: (item) async {
+            //     selectedStateid = item.stateId.toString();
+            //     selectedStateName = item.stateName;
+            //     setState(() {
+            //       DistrictViewModel.districts.clear();
+            //       stateController.text = item.stateName;
+            //     });
+            //     await DistrictViewModel.getDistricts(id: selectedStateid);
+            //     setState(() {});
+            //   },
+            //   decoration: new InputDecoration(
+            //       suffixIcon: Container(
+            //         width: 85.0,
+            //         height: 60.0,
+            //       ),
+            //       contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
+            //       filled: true,
+            //       // hintText: 'Search Player Name',
+            //       hintStyle: TextStyle(color: Colors.black)),
+            // ),
+
+            DropdownSearch<StatesModel>(
+              searchBoxController: TextEditingController(text: ''),
+              mode: Mode.MENU,
+              items: StateViewModel.statesModel,
+              maxHeight: 600,
+
+              isFilteredOnline: true,
+              showClearButton: true,
+              showSearchBox: true,
+
+              // showSelectedItem: true,
+//                    label: 'District',
+              dropdownSearchDecoration: InputDecoration(
+                filled: true,
+                fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+              ),
+              autoValidateMode: AutovalidateMode.onUserInteraction,
+              validator: (u) => u == null ? "District is required " : null,
+//              onFind: (String filter) => getData(filter),
+              onChanged: (item) async {
                 selectedStateid = item.stateId.toString();
                 selectedStateName = item.stateName;
                 setState(() {
@@ -84,16 +129,53 @@ class _InputScreenState extends State<InputScreen> {
                 await DistrictViewModel.getDistricts(id: selectedStateid);
                 setState(() {});
               },
-              decoration: new InputDecoration(
-                  suffixIcon: Container(
-                    width: 85.0,
-                    height: 60.0,
+
+              dropdownBuilder: (context, selectedItem, itemAsString) {
+                if (selectedItem == null) {
+                  return Container();
+                }
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      selectedItem.stateName,
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                  ],
+                );
+              },
+              popupItemBuilder: (context, item, isSelected) {
+                return Container(
+                  height: 50,
+                  margin: EdgeInsets.symmetric(horizontal: 8),
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Theme.of(context).primaryColor),
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.red,
                   ),
-                  contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
-                  filled: true,
-                  // hintText: 'Search Player Name',
-                  hintStyle: TextStyle(color: Colors.black)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        item.stateName,
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(15.0),
+                      ),
+                      Text(
+                        item.stateId.toString(),
+                      )
+                    ],
+                  ),
+                );
+              },
+              // popupSafeArea: PopupSafeArea(top: true, bottom: true),
+//                    selectedItem:
+//                        districtBlockModel ?? DistrictViewModel.districts[0],
             ),
+
             DistrictViewModel.districts.length == 0
                 ? Text("getting")
                 :
@@ -170,22 +252,26 @@ class _InputScreenState extends State<InputScreen> {
                 //       hintStyle: TextStyle(color: Colors.black)),
                 // ),
 //
+
                 DropdownSearch<DistrictBlockModel>(
                     searchBoxController: TextEditingController(text: ''),
                     mode: Mode.MENU,
                     items: DistrictViewModel.districts,
-                    maxHeight: 500,
+                    maxHeight: 550,
                     isFilteredOnline: true,
                     showClearButton: true,
                     showSearchBox: true,
+
                     // showSelectedItem: true,
 //                    label: 'District',
                     dropdownSearchDecoration: InputDecoration(
                       filled: true,
-                      fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                      fillColor:
+                          Theme.of(context).inputDecorationTheme.fillColor,
                     ),
                     autoValidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (u) => u == null ? "District is required " : null,
+                    validator: (u) =>
+                        u == null ? "District is required " : null,
 //              onFind: (String filter) => getData(filter),
                     onChanged: (dm) {
                       setState(() {
@@ -200,23 +286,59 @@ class _InputScreenState extends State<InputScreen> {
 //                    selectedItem:
 //                        districtBlockModel ?? DistrictViewModel.districts[0],
                   ),
+            selectedDistId == null
+                ? Container()
+                : GestureDetector(
+                    child: Row(
+                      children: [
+                        Icon(Icons.calendar_view_day),
+                        Text('${selectDay??''} ${selectedDate??'Choose Date'}')
+                      ],
+                    ),
+                    onTap: () async {
+                      FocusScope.of(context).requestFocus(new FocusNode());
+                      DateTime date = DateTime.now();
+                      date = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2021),
+                        lastDate: DateTime(2100),
+                      );
+                      if (date!=null) {
+                        var day =
+                            (date.day <= 9 ? '0' : '') + date.day.toString();
+                        var month = (date.month <= 9 ? '0' : '') +
+                            date.month.toString();
+                        selectedDate =
+                            day + '-' + month + '-' + date.year.toString();
+                        selectDay = weekday[date.weekday - 1];
+                      }
+                      // print(date.weekday);
+//                setState(() {});
+                    },
+                  ),
             Align(
               alignment: Alignment.bottomCenter,
               child: RaisedButton(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
                 color: Colors.blueAccent,
-                child: Text("Find Centres", style: TextStyle(color: Colors.white)),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                          builder: (context) => MyHomePage(
-                                stateName: selectedStateName,
-                                districtName: selectedDistName,
-                                stateId: selectedStateid,
-                                districtId: selectedDistId,
-                              )));
-                },
+                child:
+                    Text("Find Centres", style: TextStyle(color: Colors.white)),
+                onPressed: selectedDate == null
+                    ? null
+                    : () {
+                        Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                                builder: (context) => MyHomePage(
+                                      stateName: selectedStateName,
+                                      districtName: selectedDistName,
+                                      stateId: selectedStateid,
+                                      districtId: selectedDistId,
+                                      date: selectedDate,
+                                    )));
+                      },
               ),
             ),
           ],
@@ -225,7 +347,8 @@ class _InputScreenState extends State<InputScreen> {
     );
   }
 
-  Widget _customDropDownExample(BuildContext context, DistrictBlockModel item, String itemDesignation) {
+  Widget _customDropDownExample(
+      BuildContext context, DistrictBlockModel item, String itemDesignation) {
     if (item == null) {
       return Container();
     }
@@ -243,7 +366,7 @@ class _InputScreenState extends State<InputScreen> {
 //                  // backgroundImage: NetworkImage(item.avatar ?? ''),
 //                  ),
         title: Text(item.districtName),
-        subtitle: Text(item.districtId.toString() + "mk;lm"),
+        subtitle: Text(item.districtId.toString()),
       ),
     );
   }

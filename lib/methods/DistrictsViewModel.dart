@@ -8,13 +8,16 @@ class DistrictViewModel {
   static List<DistrictBlockModel> districts = [];
 
   static Future getDistricts({@required String id}) async {
-    String url = 'https://cdn-api.co-vin.in/api/v2/admin/location/districts/${id}}';
+    districts = [];
+    String url =
+        'https://cdn-api.co-vin.in/api/v2/admin/location/districts/${id}}';
     http.Response res = await http.get(url);
     print(res.body);
     switch (res.statusCode) {
       case 200:
         StateDistModel sdm = StateDistModel.fromJson(jsonDecode(res.body));
-        for (int i = 0; i < sdm.districts.length; i++) districts.add(sdm.districts[i]);
+        for (int i = 0; i < sdm.districts.length; i++)
+          districts.add(sdm.districts[i]);
         return;
         break;
       case 401:

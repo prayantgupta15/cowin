@@ -5,8 +5,9 @@ import 'package:http/http.dart' as http;
 
 class StateViewModel {
   static List<StatesModel> statesModel = [];
-
+ 
   static Future getStates() async {
+    statesModel=[];
     http.Response res = await http.get('https://cdn-api.co-vin.in/api/v2/admin/location/states');
     print(res.body);
     switch (res.statusCode) {

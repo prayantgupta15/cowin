@@ -8,11 +8,13 @@ class MyHomePage extends StatefulWidget {
   String districtName;
   String districtId;
   String stateId;
+  String date;
   MyHomePage({
     @required this.stateName,
     @required this.stateId,
     @required this.districtName,
     @required this.districtId,
+    @required this.date,
   });
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -60,11 +62,13 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(centerBlockModel.name, style: TextStyle(fontWeight: FontWeight.w500)),
+                child: Text(centerBlockModel.name,
+                    style: TextStyle(fontWeight: FontWeight.w500)),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(centerBlockModel.address, style: TextStyle(color: Colors.grey)),
+                child: Text(centerBlockModel.address,
+                    style: TextStyle(color: Colors.grey)),
               ),
               SizedBox(height: 20),
               Padding(
@@ -76,8 +80,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         Text(
                             centerBlockModel.sessions[0].minAgeLimit == null
                                 ? 'NA'
-                                : centerBlockModel.sessions[0].minAgeLimit.toString() + '+',
-                            style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500)),
+                                : centerBlockModel.sessions[0].minAgeLimit
+                                        .toString() +
+                                    '+',
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w500)),
                         Text("Age", style: TextStyle(color: Colors.grey)),
                       ],
                     ),
@@ -85,10 +93,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     Column(
                       children: [
                         Text(
-                            centerBlockModel.sessions[0].availableCapacity == null
+                            centerBlockModel.sessions[0].availableCapacity ==
+                                    null
                                 ? 'NA'
-                                : centerBlockModel.sessions[0].availableCapacity.toString(),
-                            style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500)),
+                                : centerBlockModel.sessions[0].availableCapacity
+                                    .toString(),
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w500)),
                         Text("Doses", style: TextStyle(color: Colors.grey)),
                       ],
                     ),
@@ -105,9 +117,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Slots Available:", style: TextStyle(color: Colors.grey)),
+                      Text("Slots Available:",
+                          style: TextStyle(color: Colors.grey)),
                       SizedBox(height: 5),
-                      for (int i = 0; i < centerBlockModel.sessions[0].slots.length; i++)
+                      for (int i = 0;
+                          i < centerBlockModel.sessions[0].slots.length;
+                          i++)
                         Column(
                           children: [
                             Text(centerBlockModel.sessions[0].slots[i]),
@@ -124,10 +139,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _loadData() async {
-    await CenterViewModel.getCentresByDistrict(distId: widget.districtId);
+    await CenterViewModel.getCentresByDistrict(
+        distId: widget.districtId, date: widget.date);
   }
 
-  @override
+ @override
   void initState() {
     // TODO: implement initState
     _loadData();
@@ -140,6 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+   
     return SafeArea(
       child: Scaffold(
           body: Stack(
@@ -178,7 +195,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               fontSize: 40,
                               fontWeight: FontWeight.w500,
                             ))),
-                    Text("Fri, 8 Mar", style: TextStyle(color: Colors.white, fontSize: 20)),
+                    Text("Fri, 8 Mar",
+                        style: TextStyle(color: Colors.white, fontSize: 20)),
                   ],
                 ),
                 Text("${widget.stateName}",
@@ -195,7 +213,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             shrinkWrap: true,
                             itemCount: CenterViewModel.centres.length,
                             physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, i) => myCard(CenterViewModel.centres[i]),
+                            itemBuilder: (context, i) =>
+                                myCard(CenterViewModel.centres[i]),
 
                             // ------------------------------------------------------
 

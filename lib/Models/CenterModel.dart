@@ -35,7 +35,7 @@ class CenterBlockModel {
     this.sessions,
   });
 
-  int centerId;
+  dynamic centerId;
   String name;
   String address;
   // String stateName;
@@ -78,8 +78,8 @@ class Session {
 
   String sessionId;
   // String date;
-  int availableCapacity;
-  int minAgeLimit;
+  dynamic availableCapacity;
+  dynamic minAgeLimit;
   String vaccine;
   List<String> slots;
 
