@@ -18,8 +18,7 @@ class _InputScreenState extends State<InputScreen> {
   TextEditingController districtController = new TextEditingController();
 
   GlobalKey<AutoCompleteTextFieldState<StatesModel>> key = new GlobalKey();
-  GlobalKey<AutoCompleteTextFieldState<DistrictBlockModel>> key2 =
-      new GlobalKey();
+  GlobalKey<AutoCompleteTextFieldState<DistrictBlockModel>> key2 = new GlobalKey();
 
   String selectedStateid;
   String selectedStateName;
@@ -70,9 +69,7 @@ class _InputScreenState extends State<InputScreen> {
                 );
               },
               itemFilter: (item, query) {
-                return item.stateName
-                    .toLowerCase()
-                    .startsWith(query.toLowerCase());
+                return item.stateName.toLowerCase().startsWith(query.toLowerCase());
               },
               itemSorter: (a, b) {
                 return a.stateName.compareTo(b.stateName);
@@ -175,23 +172,21 @@ class _InputScreenState extends State<InputScreen> {
 //
                 DropdownSearch<DistrictBlockModel>(
                     searchBoxController: TextEditingController(text: ''),
-                    mode: Mode.BOTTOM_SHEET,
+                    mode: Mode.MENU,
                     items: DistrictViewModel.districts,
 
                     maxHeight: 500,
                     isFilteredOnline: true,
                     showClearButton: true,
                     showSearchBox: true,
-//                    showSelectedItem: true,
+                    // showSelectedItem: true,
 //                    label: 'District',
                     dropdownSearchDecoration: InputDecoration(
                       filled: true,
-                      fillColor:
-                          Theme.of(context).inputDecorationTheme.fillColor,
+                      fillColor: Theme.of(context).inputDecorationTheme.fillColor,
                     ),
                     autoValidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (u) =>
-                        u == null ? "District is required " : null,
+                    validator: (u) => u == null ? "District is required " : null,
 //              onFind: (String filter) => getData(filter),
                     onChanged: (dm) {
                       setState(() {
@@ -202,18 +197,16 @@ class _InputScreenState extends State<InputScreen> {
 
                     dropdownBuilder: _customDropDownExample,
                     popupItemBuilder: _customPopupItemBuilderExample,
-                    popupSafeArea: PopupSafeArea(top: true, bottom: true),
+                    // popupSafeArea: PopupSafeArea(top: true, bottom: true),
 //                    selectedItem:
 //                        districtBlockModel ?? DistrictViewModel.districts[0],
                   ),
             Align(
               alignment: Alignment.bottomCenter,
               child: RaisedButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 color: Colors.blueAccent,
-                child:
-                    Text("Find Centres", style: TextStyle(color: Colors.white)),
+                child: Text("Find Centres", style: TextStyle(color: Colors.white)),
                 onPressed: () {
                   Navigator.push(
                       context,
@@ -230,8 +223,7 @@ class _InputScreenState extends State<InputScreen> {
     );
   }
 
-  Widget _customDropDownExample(
-      BuildContext context, DistrictBlockModel item, String itemDesignation) {
+  Widget _customDropDownExample(BuildContext context, DistrictBlockModel item, String itemDesignation) {
     if (item == null) {
       return Container();
     }
@@ -254,8 +246,7 @@ class _InputScreenState extends State<InputScreen> {
     );
   }
 
-  Widget _customPopupItemBuilderExample(
-      BuildContext context, DistrictBlockModel item, bool isSelected) {
+  Widget _customPopupItemBuilderExample(BuildContext context, DistrictBlockModel item, bool isSelected) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8),
       decoration: !isSelected
