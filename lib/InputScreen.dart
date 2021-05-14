@@ -7,6 +7,7 @@ import 'package:cowin/methods/StatesViewModel.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pin_code_text_field/pin_code_text_field.dart';
 
 class InputScreen extends StatefulWidget {
   @override
@@ -16,6 +17,7 @@ class InputScreen extends StatefulWidget {
 class _InputScreenState extends State<InputScreen> {
   TextEditingController stateController = new TextEditingController();
   TextEditingController districtController = new TextEditingController();
+  TextEditingController controller = TextEditingController(text: "");
 
   GlobalKey<AutoCompleteTextFieldState<StatesModel>> key = new GlobalKey();
   GlobalKey<AutoCompleteTextFieldState<DistrictBlockModel>> key2 = new GlobalKey();
@@ -112,7 +114,11 @@ class _InputScreenState extends State<InputScreen> {
                 popupItemBuilder: (context, item, isSelected) {
                   return Column(
                     children: [
-                      ListTile(title: Text(item.stateName)),
+                      ListTile(
+                          title: Text(
+                        item.stateName,
+                        style: TextStyle(fontSize: 18),
+                      )),
                       Divider(),
                     ],
                   );
@@ -228,26 +234,95 @@ class _InputScreenState extends State<InputScreen> {
                 },
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: RaisedButton(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                color: Colors.blueAccent,
-                child: Text("Find Centres", style: TextStyle(color: Colors.white)),
-                onPressed: selectedDate == null
-                    ? null
-                    : () {
-                        Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                                builder: (context) => MyHomePage(
-                                      stateName: selectedStatesModel.stateName,
-                                      districtName: selectedDistModel.districtName,
-                                      stateId: selectedStatesModel.stateId.toString(),
-                                      districtId: selectedDistModel.districtId.toString(),
-                                      date: selectedDate,
-                                    )));
-                      },
+
+            FlatButton(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    "Find Centres ",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward,
+                    color: Colors.white,
+                  )
+                ],
+              ),
+              onPressed: selectedDate == null
+                  ? null
+                  : () {
+                      Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => MyHomePage(
+                                    stateName: selectedStatesModel.stateName,
+                                    districtName: selectedDistModel.districtName,
+                                    stateId: selectedStatesModel.stateId.toString(),
+                                    districtId: selectedDistModel.districtId.toString(),
+                                    date: selectedDate,
+                                  )));
+                    },
+            ),
+
+            Row(mainAxisSize: MainAxisSize.max, children: [
+              Expanded(child: Divider(color: Colors.white.withOpacity(0.6), thickness: 2)),
+              Text("  OR  ", style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 25)),
+              Expanded(child: Divider(color: Colors.white.withOpacity(0.6), thickness: 2)),
+            ]),
+            SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Search By Pin Code:",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      )),
+                  SizedBox(height: 20),
+                  PinCodeTextField(
+                    controller: controller,
+                    highlight: true,
+                    defaultBorderColor: Colors.white,
+                    pinTextStyle: TextStyle(color: Colors.white),
+                    hasTextBorderColor: Colors.grey.shade100.withOpacity(0.5),
+                    highlightColor: Colors.white,
+                    maxLength: 6,
+                    pinBoxHeight: MediaQuery.of(context).size.width / 8,
+                    pinBoxWidth: MediaQuery.of(context).size.width / 8,
+                    pinBoxRadius: 16,
+                    onDone: (otp) {
+                      // if (otp != null && otp.length == 6)
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  FlatButton(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "Find Centres ",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward,
+                          color: Colors.white,
+                        )
+                      ],
+                    ),
+                    onPressed: () {
+                      print(controller.text);
+                    },
+                  ),
+                ],
               ),
             ),
           ],

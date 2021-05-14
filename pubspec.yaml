@@ -31,6 +31,8 @@ dependencies:
   autocomplete_textfield: ^1.6.4
   dropdown_search:
   http:
+  pin_code_text_field: ^1.6.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
