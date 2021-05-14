@@ -50,7 +50,7 @@ class _InputScreenState extends State<InputScreen> {
     return SafeArea(
       child: Scaffold(
         extendBodyBehindAppBar: false,
-        resizeToAvoidBottomPadding: true,
+        // resizeToAvoidBottomPadding: true,
         backgroundColor: Colors.blueAccent,
         body: ListView(
           physics: AlwaysScrollableScrollPhysics(),
@@ -264,6 +264,8 @@ class _InputScreenState extends State<InputScreen> {
                                     stateId: selectedStatesModel.stateId.toString(),
                                     districtId: selectedDistModel.districtId.toString(),
                                     date: selectedDate,
+                                    pin:controller.text,
+                                    isPin: false,
                                   )));
                     },
             ),
@@ -318,9 +320,24 @@ class _InputScreenState extends State<InputScreen> {
                         )
                       ],
                     ),
-                    onPressed: () {
-                      print(controller.text);
+                    onPressed: 
+                      selectedDate == null || controller.text.isEmpty
+                  ? null
+                  : () {
+                      Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => MyHomePage(
+                                    stateName: selectedStatesModel.stateName,
+                                    districtName: selectedDistModel.districtName,
+                                    stateId: selectedStatesModel.stateId.toString(),
+                                    districtId: selectedDistModel.districtId.toString(),
+                                    date: selectedDate,
+                                    pin: controller.text,
+                                    isPin: true,
+                                  )));
                     },
+                    
                   ),
                 ],
               ),

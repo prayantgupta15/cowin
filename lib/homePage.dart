@@ -10,14 +10,17 @@ class MyHomePage extends StatefulWidget {
   String districtId;
   String stateId;
   String date;
+  String pin;
+  bool isPin;
 
-  MyHomePage({
-    @required this.stateName,
-    @required this.stateId,
-    @required this.districtName,
-    @required this.districtId,
-    @required this.date,
-  });
+  MyHomePage(
+      {@required this.stateName,
+      @required this.stateId,
+      @required this.districtName,
+      @required this.districtId,
+      @required this.date,
+      @required this.pin,
+      @required this.isPin});
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -69,11 +72,13 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(centerBlockModel.name, style: TextStyle(fontWeight: FontWeight.w500)),
+                child: Text(centerBlockModel.name,
+                    style: TextStyle(fontWeight: FontWeight.w500)),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(centerBlockModel.address, style: TextStyle(color: Colors.grey)),
+                child: Text(centerBlockModel.address,
+                    style: TextStyle(color: Colors.grey)),
               ),
               SizedBox(height: 20),
               Padding(
@@ -85,8 +90,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         Text(
                             centerBlockModel.sessions[0].minAgeLimit == null
                                 ? 'NA'
-                                : centerBlockModel.sessions[0].minAgeLimit.toString() + '+',
-                            style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500)),
+                                : centerBlockModel.sessions[0].minAgeLimit
+                                        .toString() +
+                                    '+',
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w500)),
                         Text("Age", style: TextStyle(color: Colors.grey)),
                       ],
                     ),
@@ -94,10 +103,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     Column(
                       children: [
                         Text(
-                            centerBlockModel.sessions[0].availableCapacity == null
+                            centerBlockModel.sessions[0].availableCapacity ==
+                                    null
                                 ? 'NA'
-                                : centerBlockModel.sessions[0].availableCapacity.toString(),
-                            style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500)),
+                                : centerBlockModel.sessions[0].availableCapacity
+                                    .toString(),
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w500)),
                         Text("Doses", style: TextStyle(color: Colors.grey)),
                       ],
                     ),
@@ -114,9 +127,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Slots Available:", style: TextStyle(color: Colors.grey)),
+                      Text("Slots Available:",
+                          style: TextStyle(color: Colors.grey)),
                       SizedBox(height: 5),
-                      for (int i = 0; i < centerBlockModel.sessions[0].slots.length; i++)
+                      for (int i = 0;
+                          i < centerBlockModel.sessions[0].slots.length;
+                          i++)
                         Column(
                           children: [
                             SizedBox(height: 2),
@@ -134,13 +150,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _loadData() async {
-    await CenterViewModel.getCentresByDistrict(distId: widget.districtId, date: widget.date);
+    await CenterViewModel.getCentresByDistrict(
+        distId: widget.districtId, date: widget.date);
+     await CenterViewModel.getCentresByPin(
+        pin: widget.pin, date: widget.date);
   }
 
   @override
   void initState() {
     // TODO: implement initState
-    _loadData();
+    // _loadData();
+
     super.initState();
     if (mounted)
       setState(() {
@@ -158,11 +178,13 @@ class _MyHomePageState extends State<MyHomePage> {
               height: MediaQuery.of(context).size.height * 0.5,
               decoration: BoxDecoration(
                 color: Colors.blue,
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(88)),
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(88)),
               ),
             ),
             FutureBuilder(
-              future: CenterViewModel.getCentresByDistrict(distId: widget.districtId, date: widget.date),
+              future:widget.isPin?CenterViewModel.getCentresByPin(pin: widget.pin, date: widget.date): CenterViewModel.getCentresByDistrict(
+                  distId: widget.districtId, date: widget.date),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   CentresModel cm = snapshot.data;
@@ -170,53 +192,63 @@ class _MyHomePageState extends State<MyHomePage> {
                   print("data");
                   return CupertinoScrollbar(
                     //MAIN LIST VIEW
-                    child: ListView(padding: EdgeInsets.symmetric(horizontal: 12), children: [
-                      header(),
-                      SizedBox(height: 25),
-                      FilterMenu(),
-                      ListView.builder(
-                          padding: EdgeInsetsDirectional.only(top: 10, bottom: 20),
-                          shrinkWrap: true,
-                          itemCount: cm.centers.length,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, i) {
-                            bool show18 = false;
-                            bool show45 = false;
-                            bool showCovx = false;
-                            bool showCovd = false;
-                            if (cvx) {
-                              if (cm.centers[i].sessions[0].vaccine.toLowerCase().startsWith("covax"))
-                                showCovx = true;
-                              else
-                                showCovx = false;
-                            }
+                    child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 12),
+                        children: [
+                          header(),
+                          SizedBox(height: 25),
+                          FilterMenu(),
+                          ListView.builder(
+                              padding: EdgeInsetsDirectional.only(
+                                  top: 10, bottom: 20),
+                              shrinkWrap: true,
+                              itemCount: cm.centers.length,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, i) {
+                                bool show18 = false;
+                                bool show45 = false;
+                                bool showCovx = false;
+                                bool showCovd = false;
+                                if (cvx) {
+                                  if (cm.centers[i].sessions[0].vaccine
+                                      .toLowerCase()
+                                      .startsWith("covax"))
+                                    showCovx = true;
+                                  else
+                                    showCovx = false;
+                                }
 
-                            if (cvld) {
-                              if (cm.centers[i].sessions[0].vaccine.toLowerCase().startsWith('covi'))
-                                showCovd = true;
-                              else
-                                showCovd = false;
-                            }
+                                if (cvld) {
+                                  if (cm.centers[i].sessions[0].vaccine
+                                      .toLowerCase()
+                                      .startsWith('covi'))
+                                    showCovd = true;
+                                  else
+                                    showCovd = false;
+                                }
 
-                            if (_eighteen) {
-                              if (cm.centers[i].sessions[0].minAgeLimit == 18)
-                                show18 = true;
-                              else
-                                show18 = false;
-                            }
+                                if (_eighteen) {
+                                  if (cm.centers[i].sessions[0].minAgeLimit ==
+                                      18)
+                                    show18 = true;
+                                  else
+                                    show18 = false;
+                                }
 
-                            if (_forty5) {
-                              if (cm.centers[i].sessions[0].minAgeLimit == 45)
-                                show45 = true;
-                              else
-                                show45 = false;
-                            }
-                            if ((show18 || show45) && (showCovd || showCovx))
-                              return myCard(cm.centers[i]);
-                            else
-                              return Container();
-                          }),
-                    ]),
+                                if (_forty5) {
+                                  if (cm.centers[i].sessions[0].minAgeLimit ==
+                                      45)
+                                    show45 = true;
+                                  else
+                                    show45 = false;
+                                }
+                                if ((show18 || show45) &&
+                                    (showCovd || showCovx))
+                                  return myCard(cm.centers[i]);
+                                else
+                                  return Container();
+                              }),
+                        ]),
                   );
                 } else
                   return Padding(
@@ -325,7 +357,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 borderRadius: BorderRadius.circular(borderRadius),
               ),
               color: _eighteen ? red : white,
-              child: Text("18+", style: TextStyle(color: _eighteen ? white : black, fontWeight: FontWeight.w600)),
+              child: Text("18+",
+                  style: TextStyle(
+                      color: _eighteen ? white : black,
+                      fontWeight: FontWeight.w600)),
               onPressed: () {
                 _eighteen = !_eighteen;
                 HapticFeedback.lightImpact();
@@ -411,7 +446,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       fontSize: 40,
                       fontWeight: FontWeight.w500,
                     ))),
-            Text("Fri, 8 Mar", style: TextStyle(color: Colors.white, fontSize: 20)),
+            Text("Fri, 8 Mar",
+                style: TextStyle(color: Colors.white, fontSize: 20)),
           ],
         ),
         Text("${widget.stateName}",
