@@ -30,8 +30,8 @@ class CenterViewModel {
   }
 
   static Future<CentresModel> getCentresByPin({@required String pin, @required String date}) async {
-    String url = 'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=${pin}&date=${date}';
-    print(url);
+    String url =
+        'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=${pin}&date=${date}';
     http.Response res = await http.get(url);
     switch (res.statusCode) {
       case 200:

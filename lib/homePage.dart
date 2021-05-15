@@ -26,7 +26,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   ScrollController scrollController = ScrollController();
 
   bool loading = true;
@@ -74,13 +73,11 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(centerBlockModel.name,
-                    style: TextStyle(fontWeight: FontWeight.w500)),
+                child: Text(centerBlockModel.name, style: TextStyle(fontWeight: FontWeight.w500)),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(centerBlockModel.address,
-                    style: TextStyle(color: Colors.grey)),
+                child: Text(centerBlockModel.address, style: TextStyle(color: Colors.grey)),
               ),
               SizedBox(height: 20),
               Padding(
@@ -92,12 +89,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         Text(
                             centerBlockModel.sessions[0].minAgeLimit == null
                                 ? 'NA'
-                                : centerBlockModel.sessions[0].minAgeLimit
-                                        .toString() +
-                                    '+',
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.w500)),
+                                : centerBlockModel.sessions[0].minAgeLimit.toString() + '+',
+                            style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500)),
                         Text("Age", style: TextStyle(color: Colors.grey)),
                       ],
                     ),
@@ -105,14 +98,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     Column(
                       children: [
                         Text(
-                            centerBlockModel.sessions[0].availableCapacity ==
-                                    null
+                            centerBlockModel.sessions[0].availableCapacity == null
                                 ? 'NA'
-                                : centerBlockModel.sessions[0].availableCapacity
-                                    .toString(),
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.w500)),
+                                : centerBlockModel.sessions[0].availableCapacity.toString(),
+                            style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500)),
                         Text("Doses", style: TextStyle(color: Colors.grey)),
                       ],
                     ),
@@ -129,12 +118,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Slots Available:",
-                          style: TextStyle(color: Colors.grey)),
+                      Text("Slots Available:", style: TextStyle(color: Colors.grey)),
                       SizedBox(height: 5),
-                      for (int i = 0;
-                          i < centerBlockModel.sessions[0].slots.length;
-                          i++)
+                      for (int i = 0; i < centerBlockModel.sessions[0].slots.length; i++)
                         Column(
                           children: [
                             SizedBox(height: 2),
@@ -163,40 +149,36 @@ class _MyHomePageState extends State<MyHomePage> {
     // _loadData();
 
     super.initState();
-    if (mounted){
+    if (mounted) {
       var day = (widget.date.day <= 9 ? '0' : '') + widget.date.day.toString();
-                    var month =
-                        (widget.date.month <= 9 ? '0' : '') + widget.date.month.toString();
-                selectedDate =
-                        day + '-' + month + '-' + widget.date.year.toString();
+      var month = (widget.date.month <= 9 ? '0' : '') + widget.date.month.toString();
+      selectedDate = day + '-' + month + '-' + widget.date.year.toString();
       setState(() {
         loading = false;
       });
-
     }
   }
 
   @override
   Widget build(BuildContext context) {
-       
     return SafeArea(
       child: Scaffold(
+        // backgroundColor: Colors.blueAccent,
+
         body: Stack(
           children: [
             Container(
-              height: MediaQuery.of(context).size.height * 0.5,
+              height: MediaQuery.of(context).size.height * 0.6,
               decoration: BoxDecoration(
                 color: Colors.blue,
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(88)),
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(88)),
               ),
             ),
+            Center(child: Image.asset('assets/image.png')),
             FutureBuilder(
               future: widget.isPin
-                  ? CenterViewModel.getCentresByPin(
-                      pin: widget.pin, date:selectedDate)
-                  : CenterViewModel.getCentresByDistrict(
-                      distId: widget.districtId, date: selectedDate),
+                  ? CenterViewModel.getCentresByPin(pin: widget.pin, date: selectedDate)
+                  : CenterViewModel.getCentresByDistrict(distId: widget.districtId, date: selectedDate),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   CentresModel cm = snapshot.data;
@@ -204,63 +186,53 @@ class _MyHomePageState extends State<MyHomePage> {
                   print("data");
                   return CupertinoScrollbar(
                     //MAIN LIST VIEW
-                    child: ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        children: [
-                          header(),
-                          SizedBox(height: 25),
-                          FilterMenu(),
-                          ListView.builder(
-                              padding: EdgeInsetsDirectional.only(
-                                  top: 10, bottom: 20),
-                              shrinkWrap: true,
-                              itemCount: cm.centers.length,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, i) {
-                                bool show18 = false;
-                                bool show45 = false;
-                                bool showCovx = false;
-                                bool showCovd = false;
-                                if (cvx) {
-                                  if (cm.centers[i].sessions[0].vaccine
-                                      .toLowerCase()
-                                      .startsWith("covax"))
-                                    showCovx = true;
-                                  else
-                                    showCovx = false;
-                                }
+                    child: ListView(padding: EdgeInsets.symmetric(horizontal: 12), children: [
+                      header(),
+                      SizedBox(height: 25),
+                      FilterMenu(),
+                      ListView.builder(
+                          padding: EdgeInsetsDirectional.only(top: 10, bottom: 20),
+                          shrinkWrap: true,
+                          itemCount: cm.centers.length,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, i) {
+                            bool show18 = false;
+                            bool show45 = false;
+                            bool showCovx = false;
+                            bool showCovd = false;
+                            if (cvx) {
+                              if (cm.centers[i].sessions[0].vaccine.toLowerCase().startsWith("covax"))
+                                showCovx = true;
+                              else
+                                showCovx = false;
+                            }
 
-                                if (cvld) {
-                                  if (cm.centers[i].sessions[0].vaccine
-                                      .toLowerCase()
-                                      .startsWith('covi'))
-                                    showCovd = true;
-                                  else
-                                    showCovd = false;
-                                }
+                            if (cvld) {
+                              if (cm.centers[i].sessions[0].vaccine.toLowerCase().startsWith('covi'))
+                                showCovd = true;
+                              else
+                                showCovd = false;
+                            }
 
-                                if (_eighteen) {
-                                  if (cm.centers[i].sessions[0].minAgeLimit ==
-                                      18)
-                                    show18 = true;
-                                  else
-                                    show18 = false;
-                                }
+                            if (_eighteen) {
+                              if (cm.centers[i].sessions[0].minAgeLimit == 18)
+                                show18 = true;
+                              else
+                                show18 = false;
+                            }
 
-                                if (_forty5) {
-                                  if (cm.centers[i].sessions[0].minAgeLimit ==
-                                      45)
-                                    show45 = true;
-                                  else
-                                    show45 = false;
-                                }
-                                if ((show18 || show45) &&
-                                    (showCovd || showCovx))
-                                  return myCard(cm.centers[i]);
-                                else
-                                  return Container();
-                              }),
-                        ]),
+                            if (_forty5) {
+                              if (cm.centers[i].sessions[0].minAgeLimit == 45)
+                                show45 = true;
+                              else
+                                show45 = false;
+                            }
+                            if ((show18 || show45) && (showCovd || showCovx))
+                              return myCard(cm.centers[i]);
+                            else
+                              return Container();
+                          }),
+                    ]),
                   );
                 } else
                   return Padding(
@@ -273,6 +245,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         CircularProgressIndicator(
                           backgroundColor: Colors.white,
                         ),
+
+                        Text(
+                          'Getting centres...',
+                          style: TextStyle(color: Colors.white),
+                        )
                       ],
                     ),
                   );
@@ -357,6 +334,7 @@ class _MyHomePageState extends State<MyHomePage> {
   FilterMenu() {
     double borderRadius = 12;
     Color red = Colors.red;
+    Color tnsp = Colors.transparent;
     Color white = Colors.white;
     Color black = Colors.black;
     return Column(
@@ -364,15 +342,13 @@ class _MyHomePageState extends State<MyHomePage> {
       children: [
         Row(
           children: [
-            RaisedButton(
+            FlatButton(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(borderRadius),
+                side: BorderSide(color: _eighteen ? red : white),
               ),
-              color: _eighteen ? red : white,
-              child: Text("18+",
-                  style: TextStyle(
-                      color: _eighteen ? white : black,
-                      fontWeight: FontWeight.w600)),
+              color: _eighteen ? red : tnsp,
+              child: Text("18+", style: TextStyle(color: white, fontWeight: FontWeight.w600)),
               onPressed: () {
                 _eighteen = !_eighteen;
                 HapticFeedback.lightImpact();
@@ -380,13 +356,15 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             SizedBox(width: MediaQuery.of(context).size.width * 0.1),
-            RaisedButton(
-              color: _forty5 ? red : white,
+            FlatButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(borderRadius),
+                side: BorderSide(color: _forty5 ? red : white),
+              ),
+              color: _forty5 ? red : tnsp,
               child: Text(
                 "45+",
-                style: TextStyle(
-                  color: _forty5 ? white : black,
-                ),
+                style: TextStyle(color: white),
               ),
               onPressed: () {
                 _forty5 = !_forty5;
@@ -398,12 +376,16 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         Row(
           children: [
-            RaisedButton(
-              color: cvx ? red : white,
+            FlatButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(borderRadius),
+                side: BorderSide(color: cvx ? red : white),
+              ),
+              color: cvx ? red : tnsp,
               child: Text(
                 "Covaxin",
                 style: TextStyle(
-                  color: cvx ? white : black,
+                  color: white,
                 ),
               ),
               onPressed: () {
@@ -413,12 +395,16 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             SizedBox(width: MediaQuery.of(context).size.width * 0.1),
-            RaisedButton(
-              color: cvld ? red : white,
+            FlatButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(borderRadius),
+                side: BorderSide(color: cvld ? red : white),
+              ),
+              color: cvld ? red : tnsp,
               child: Text(
                 "Covishield",
                 style: TextStyle(
-                  color: cvld ? white : black,
+                  color: white,
                 ),
               ),
               onPressed: () {
@@ -434,9 +420,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   header() {
-     List<String> weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-      List<String> month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul','Aug','Sep','Oct','Nov','Dec'];
-  
+    List<String> weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    List<String> month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
     // print(weekday[dateTime.weekday-1]+', '+dateTime.day.toString()+' '+ month[dateTime.month-1]);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -452,26 +438,39 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         SizedBox(height: 20),
+        Text('Centres in ',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+            )),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
-                child: Text("${widget.isPin?widget.pin:widget.districtName+','}",
+                child: Text("${widget.isPin ? widget.pin : widget.districtName + ','}",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 40,
                       fontWeight: FontWeight.w500,
                     ))),
-            Text(weekday[widget.date.weekday-1]+', '+ month[widget.date.month-1]+' '+widget.date.day.toString(),
+            Text(
+                weekday[widget.date.weekday - 1] +
+                    ', ' +
+                    month[widget.date.month - 1] +
+                    ' ' +
+                    widget.date.day.toString(),
                 style: TextStyle(color: Colors.white, fontSize: 20)),
           ],
         ),
-      widget.isPin?Container(): Text("${widget.stateName}",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 35,
-              fontWeight: FontWeight.bold,
-            )),
+        widget.isPin
+            ? Container()
+            : Text("${widget.stateName}",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold,
+                )),
       ],
     );
   }

@@ -1,4 +1,3 @@
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:cowin/Models/DisctrictsModel.dart';
 import 'package:cowin/Models/IndStateModel.dart';
 import 'package:cowin/homePage.dart';
@@ -17,46 +16,19 @@ class InputScreen extends StatefulWidget {
 class _InputScreenState extends State<InputScreen> {
   TextEditingController stateController = new TextEditingController();
   TextEditingController districtController = new TextEditingController();
-  TextEditingController controller = TextEditingController(text: "");
-
-  GlobalKey<AutoCompleteTextFieldState<StatesModel>> key = new GlobalKey();
-  GlobalKey<AutoCompleteTextFieldState<DistrictBlockModel>> key2 =
-      new GlobalKey();
-
-  StatesModel selectedStatesModel =
-      StatesModel(stateName: 'Choose State', stateId: null);
-  // String selectedStateid;
-  // String selectedStateName;
-
-  // String selectedDate;
-  // String selectDay;
-  DateTime date = DateTime.now();
+  TextEditingController pinController = TextEditingController(text: "");
+  StatesModel selectedStatesModel = StatesModel(stateName: 'Choose State', stateId: null);
+  final _formKey1 = GlobalKey<FormState>();
+  bool pinError = false;
+  DateTime selectedDate = DateTime.now().add(Duration(days: 1));
 
   String getDate(DateTime dateTime) {
-    List<String> month = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ];
+    List<String> month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     List<String> weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return weekday[dateTime.weekday - 1] +
-        ', ' +
-        month[dateTime.month - 1] +
-        ' ' +
-        dateTime.day.toString();
+    return weekday[dateTime.weekday - 1] + ', ' + month[dateTime.month - 1] + ' ' + dateTime.day.toString();
   }
 
-  DistrictBlockModel selectedDistModel =
-      DistrictBlockModel(districtName: 'Choose District', districtId: null);
+  DistrictBlockModel selectedDistModel = DistrictBlockModel(districtName: 'Choose District', districtId: null);
   // String selectedDistName;
   // String selectedDistId;
   void _loadStates() async {
@@ -75,14 +47,11 @@ class _InputScreenState extends State<InputScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        extendBodyBehindAppBar: false,
-        // resizeToAvoidBottomPadding: true,
         backgroundColor: Colors.blueAccent,
         body: ListView(
           physics: AlwaysScrollableScrollPhysics(),
           children: [
             Image.asset('assets/image.png'),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: GestureDetector(
@@ -91,7 +60,7 @@ class _InputScreenState extends State<InputScreen> {
                   children: [
                     Icon(Icons.calendar_today_sharp, color: Colors.white),
                     Text(
-                      ' ${date != null ? getDate(date) : 'Choose Date'}',
+                      ' ${selectedDate != null ? getDate(selectedDate) : 'Choose Date'}',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -116,233 +85,28 @@ class _InputScreenState extends State<InputScreen> {
                     //     day + '-' + month + '-' + date.year.toString();
                     // // selectDay = weekday[date.weekday - 1];
                     // print(selectedDate);
-                    date = datetime;
+                    selectedDate = datetime;
                   }
                 },
               ),
             ),
-
             SizedBox(
-              height: 30,
+              height: 50,
             ),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: DropdownSearch<StatesModel>(
-                // searchBoxController: TextEditingController(text: ''),
-                items: StateViewModel.statesModel,
-                selectedItem: selectedStatesModel,
-
-                mode: Mode.DIALOG,
-                maxHeight: 300,
-                // showSelectedItem: true,
-                dropdownSearchDecoration: InputDecoration(
-                    labelText: 'State',
-                    labelStyle: TextStyle(color: Colors.white),
-                    border: OutlineInputBorder(borderSide: BorderSide.none)),
-                searchBoxDecoration: InputDecoration(
-                  prefix: Icon(Icons.search),
-                  hintText: 'Search',
-                ),
-                // dialogMaxWidth: 500,
-                isFilteredOnline: true,
-                showClearButton: false,
-                showSearchBox: true,
-                showAsSuffixIcons: false,
-                dropDownButton: Icon(Icons.expand_more, color: Colors.white),
-                filterFn: (item, query) {
-                  return item.stateName
-                      .toLowerCase()
-                      .startsWith(query.toLowerCase());
-                },
-                popupBackgroundColor: Colors.grey.shade100.withOpacity(0.6),
-                autoValidateMode: AutovalidateMode.onUserInteraction,
-                validator: (u) => u == null ? "State is required " : null,
-                onChanged: (item) async {
-                  selectedStatesModel = StatesModel(
-                      stateId: item.stateId, stateName: item.stateName);
-                  setState(() {
-                    DistrictViewModel.districts.clear();
-                    selectedDistModel = DistrictBlockModel(
-                        districtName: 'Choose District', districtId: null);
-
-                    stateController.text = item.stateName;
-                  });
-                  await DistrictViewModel.getDistricts(
-                      id: selectedStatesModel.stateId.toString());
-                  setState(() {});
-                },
-
-                dropdownBuilder: (context, selectedItem, itemAsString) {
-                  if (selectedItem == null) {
-                    return Container();
-                  }
-                  return ListTile(
-                    title: Text(selectedItem.stateName,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        )),
-                  );
-                },
-                popupItemBuilder: (context, item, isSelected) {
-                  return Column(
-                    children: [
-                      ListTile(
-                          title: Text(
-                        item.stateName,
-                        style: TextStyle(fontSize: 18),
-                      )),
-                      Divider(),
-                    ],
-                  );
-                },
-              ),
-            ),
-            // DistrictViewModel.districts.length == 0
-            //     ? Container()
-            //     :
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: DropdownSearch<DistrictBlockModel>(
-                selectedItem: selectedDistModel,
-                items: DistrictViewModel.districts,
-
-                mode: Mode.DIALOG,
-                maxHeight: 300,
-                // showSelectedItem: true,
-                dropdownSearchDecoration: InputDecoration(
-                    labelText: 'District',
-                    labelStyle: TextStyle(color: Colors.white),
-                    border: OutlineInputBorder(borderSide: BorderSide.none)),
-                searchBoxDecoration: InputDecoration(
-                  prefix: Icon(Icons.search),
-                  hintText: 'Search',
-                ),
-                // dialogMaxWidth: 500,
-                isFilteredOnline: true,
-                showClearButton: false,
-                showSearchBox: true,
-                showAsSuffixIcons: false,
-                dropDownButton: Icon(Icons.expand_more, color: Colors.white),
-
-                filterFn: (item, query) {
-                  return item.districtName
-                      .toLowerCase()
-                      .startsWith(query.toLowerCase());
-                },
-                // showSelectedItem: true
-                popupBackgroundColor: Colors.grey.shade200.withOpacity(0.6),
-
-                autoValidateMode: AutovalidateMode.onUserInteraction,
-                validator: (u) => u == null ? "District is required " : null,
-//              onFind: (String filter) => getData(filter),
-                onChanged: (dm) {
-                  setState(() {
-                    selectedDistModel = DistrictBlockModel(
-                        districtId: dm.districtId,
-                        districtName: dm.districtName);
-                  });
-                },
-
-                popupItemBuilder: (context, item, isSelected) {
-                  return Column(
-                    children: [
-                      ListTile(
-                          title: Text(
-                        item.districtName,
-                      )),
-                      Divider(),
-                    ],
-                  );
-                },
-                dropdownBuilder: (context, selectedItem, itemAsString) {
-                  if (selectedItem == null) {
-                    return Container();
-                  }
-                  return ListTile(
-                    title: Text(selectedItem.districtName,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        )),
-                  );
-                },
-                // popupSafeArea: PopupSafeArea(top: true, bottom: true),
-//                    selectedItem:
-//                        districtBlockModel ?? DistrictViewModel.districts[0],
-              ),
-            ),
-            // SizedBox(height: 30),
-            // selectedDistModel.districtId == null
-            //     ? Container()
-            //     :
-
-            FlatButton(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    "Find Centres ",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Icon(
-                    Icons.arrow_forward,
-                    color: Colors.white,
-                  )
-                ],
-              ),
-              onPressed: date == null
-                  ? null
-                  : () {
-                      Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) => MyHomePage(
-                                    stateName: selectedStatesModel.stateName,
-                                    districtName:
-                                        selectedDistModel.districtName,
-                                    stateId:
-                                        selectedStatesModel.stateId.toString(),
-                                    districtId:
-                                        selectedDistModel.districtId.toString(),
-                                    date: date,
-                                    pin: controller.text,
-                                    isPin: false,
-                                  )));
-                    },
-            ),
-
-            Row(mainAxisSize: MainAxisSize.max, children: [
-              Expanded(
-                  child: Divider(
-                      color: Colors.white.withOpacity(0.6), thickness: 2)),
-              Text("  OR  ",
-                  style: TextStyle(
-                      color: Colors.white.withOpacity(0.6), fontSize: 25)),
-              Expanded(
-                  child: Divider(
-                      color: Colors.white.withOpacity(0.6), thickness: 2)),
-            ]),
-            SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Search By Pin Code:",
+                  Text("search By pin code:",
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.white,
                       )),
                   SizedBox(height: 20),
                   PinCodeTextField(
-                    controller: controller,
+                    hasUnderline: true,
+                    controller: pinController,
                     highlight: true,
                     defaultBorderColor: Colors.white,
                     pinTextStyle: TextStyle(color: Colors.white),
@@ -353,48 +117,248 @@ class _InputScreenState extends State<InputScreen> {
                     pinBoxWidth: MediaQuery.of(context).size.width / 8,
                     pinBoxRadius: 16,
                     onDone: (otp) {
-                      // if (otp != null && otp.length == 6)
+                      if (pinError) {
+                        if (pinController.text.length == 6) {
+                          pinError = false;
+                          setState(() {});
+                        }
+                      }
                     },
                   ),
+                  pinError ? Text('Enter Pincode', style: TextStyle(color: Colors.red)) : Container(),
                   SizedBox(height: 20),
-                  FlatButton(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "Find Centres ",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: FlatButton(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "Find Centres ",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        Icon(
-                          Icons.arrow_forward,
-                          color: Colors.white,
-                        )
-                      ],
+                          Icon(
+                            Icons.arrow_forward,
+                            color: Colors.white,
+                          )
+                        ],
+                      ),
+                      onPressed: () {
+                        if (pinController.text.length != 6) {
+                          pinError = true;
+                          setState(() {});
+                        } else
+                          Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                  builder: (context) => MyHomePage(
+                                        stateName: selectedStatesModel.stateName,
+                                        districtName: selectedDistModel.districtName,
+                                        stateId: selectedStatesModel.stateId.toString(),
+                                        districtId: selectedDistModel.districtId.toString(),
+                                        date: selectedDate,
+                                        pin: pinController.text,
+                                        isPin: true,
+                                      )));
+                      },
                     ),
-                    onPressed: date == null || controller.text.isEmpty
-                        ? null
-                        : () {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) => MyHomePage(
-                                          stateName:
-                                              selectedStatesModel.stateName,
-                                          districtName:
-                                              selectedDistModel.districtName,
-                                          stateId: selectedStatesModel.stateId
-                                              .toString(),
-                                          districtId: selectedDistModel
-                                              .districtId
-                                              .toString(),
-                                          date: date,
-                                          pin: controller.text,
-                                          isPin: true,
-                                        )));
-                          },
+                  ),
+                ],
+              ),
+            ),
+            Row(mainAxisSize: MainAxisSize.max, children: [
+              Expanded(child: Divider(color: Colors.white.withOpacity(0.6), thickness: 2)),
+              Text("  OR  ", style: TextStyle(color: Colors.white, fontSize: 25)),
+              Expanded(child: Divider(color: Colors.white.withOpacity(0.6), thickness: 2)),
+            ]),
+            SizedBox(height: 20),
+            Form(
+              key: _formKey1,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    child: DropdownSearch<StatesModel>(
+                      // searchBoxController: TextEditingController(text: ''),
+                      items: StateViewModel.statesModel,
+                      selectedItem: selectedStatesModel,
+
+                      mode: Mode.DIALOG,
+                      maxHeight: 300,
+                      // showSelectedItem: true,
+                      dropdownSearchDecoration: InputDecoration(
+                          labelText: 'State',
+                          labelStyle: TextStyle(color: Colors.white),
+                          border: OutlineInputBorder(borderSide: BorderSide.none)),
+                      searchBoxDecoration: InputDecoration(
+                        prefix: Icon(Icons.search),
+                        hintText: 'Search',
+                      ),
+                      // dialogMaxWidth: 500,
+                      isFilteredOnline: true,
+                      showClearButton: false,
+                      showSearchBox: true,
+                      showAsSuffixIcons: false,
+                      dropDownButton: Icon(Icons.expand_more, color: Colors.white),
+                      filterFn: (item, query) {
+                        return item.stateName.toLowerCase().startsWith(query.toLowerCase());
+                      },
+                      popupBackgroundColor: Colors.white,
+                      // Colors.grey.shade100.withOpacity(0.6),
+                      // autoValidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (StatesModel sm) {
+                        if (sm.stateId == null) return 'Choose State';
+                        return null;
+                      },
+                      onChanged: (item) async {
+                        selectedStatesModel = StatesModel(stateId: item.stateId, stateName: item.stateName);
+                        setState(() {
+                          DistrictViewModel.districts.clear();
+                          selectedDistModel = DistrictBlockModel(districtName: 'Choose District', districtId: null);
+
+                          stateController.text = item.stateName;
+                        });
+                        await DistrictViewModel.getDistricts(id: selectedStatesModel.stateId.toString());
+                        setState(() {});
+                      },
+
+                      dropdownBuilder: (context, selectedItem, itemAsString) {
+                        if (selectedItem == null) {
+                          return Container();
+                        }
+                        return ListTile(
+                          title: Text(selectedItem.stateName,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                              )),
+                        );
+                      },
+                      popupItemBuilder: (context, item, isSelected) {
+                        return Column(
+                          children: [
+                            ListTile(
+                                title: Text(
+                              item.stateName,
+                              style: TextStyle(fontSize: 18),
+                            )),
+                            Divider(),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 30, right: 30, top: 10),
+                    child: DropdownSearch<DistrictBlockModel>(
+                      selectedItem: selectedDistModel,
+                      items: DistrictViewModel.districts,
+
+                      mode: Mode.DIALOG,
+                      maxHeight: 300,
+                      // showSelectedItem: true,
+                      dropdownSearchDecoration: InputDecoration(
+                          labelText: 'District',
+                          labelStyle: TextStyle(color: Colors.white),
+                          border: OutlineInputBorder(borderSide: BorderSide.none)),
+                      searchBoxDecoration: InputDecoration(
+                        prefix: Icon(Icons.search),
+                        hintText: 'Search',
+                      ),
+                      // dialogMaxWidth: 500,
+                      isFilteredOnline: true,
+                      showClearButton: false,
+                      showSearchBox: true,
+                      showAsSuffixIcons: false,
+                      dropDownButton: Icon(Icons.expand_more, color: Colors.white),
+
+                      filterFn: (item, query) {
+                        return item.districtName.toLowerCase().startsWith(query.toLowerCase());
+                      },
+                      // showSelectedItem: true
+                      popupBackgroundColor: Colors.white,
+                      // Colors.grey.shade200.withOpacity(0.6),
+
+                      // autoValidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (DistrictBlockModel dm) {
+                        if (dm.districtId == null) return 'Choose District';
+                        return null;
+                      },
+                      onChanged: (dm) {
+                        setState(() {
+                          selectedDistModel =
+                              DistrictBlockModel(districtId: dm.districtId, districtName: dm.districtName);
+                        });
+                      },
+
+                      popupItemBuilder: (context, item, isSelected) {
+                        return Column(
+                          children: [
+                            ListTile(
+                                title: Text(
+                              item.districtName,
+                            )),
+                            Divider(),
+                          ],
+                        );
+                      },
+                      dropdownBuilder: (context, selectedItem, itemAsString) {
+                        if (selectedItem == null) {
+                          return Container();
+                        }
+                        return ListTile(
+                          title: Text(selectedItem.districtName,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                              )),
+                        );
+                      },
+                      // popupSafeArea: PopupSafeArea(top: true, bottom: true),
+//                    selectedItem:
+//                        districtBlockModel ?? DistrictViewModel.districts[0],
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: FlatButton(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "Find Centres ",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward,
+                            color: Colors.white,
+                          )
+                        ],
+                      ),
+                      onPressed: () {
+                        if (_formKey1.currentState.validate())
+                          Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                  builder: (context) => MyHomePage(
+                                        stateName: selectedStatesModel.stateName,
+                                        districtName: selectedDistModel.districtName,
+                                        stateId: selectedStatesModel.stateId.toString(),
+                                        districtId: selectedDistModel.districtId.toString(),
+                                        date: selectedDate,
+                                        pin: pinController.text,
+                                        isPin: false,
+                                      )));
+                      },
+                    ),
                   ),
                 ],
               ),
