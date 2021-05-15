@@ -9,7 +9,7 @@ class MyHomePage extends StatefulWidget {
   String districtName;
   String districtId;
   String stateId;
-  String date;
+  DateTime date;
   String pin;
   bool isPin;
 
@@ -26,6 +26,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
   ScrollController scrollController = ScrollController();
 
   bool loading = true;
@@ -34,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _forty5 = true;
   bool cvld = true;
   bool cvx = true;
+  String selectedDate;
 
   Widget myCard(CenterBlockModel centerBlockModel) {
     return Card(
@@ -149,11 +151,11 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _loadData() async {
-    await CenterViewModel.getCentresByDistrict(
-        distId: widget.districtId, date: widget.date);
-    await CenterViewModel.getCentresByPin(pin: widget.pin, date: widget.date);
-  }
+  // void _loadData() async {
+  //   await CenterViewModel.getCentresByDistrict(
+  //       distId: widget.districtId, date: widget.date);
+  //   await CenterViewModel.getCentresByPin(pin: widget.pin, date: widget.date);
+  // }
 
   @override
   void initState() {
@@ -161,14 +163,22 @@ class _MyHomePageState extends State<MyHomePage> {
     // _loadData();
 
     super.initState();
-    if (mounted)
+    if (mounted){
+      var day = (widget.date.day <= 9 ? '0' : '') + widget.date.day.toString();
+                    var month =
+                        (widget.date.month <= 9 ? '0' : '') + widget.date.month.toString();
+                selectedDate =
+                        day + '-' + month + '-' + widget.date.year.toString();
       setState(() {
         loading = false;
       });
+
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+       
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -184,9 +194,9 @@ class _MyHomePageState extends State<MyHomePage> {
             FutureBuilder(
               future: widget.isPin
                   ? CenterViewModel.getCentresByPin(
-                      pin: widget.pin, date: widget.date)
+                      pin: widget.pin, date:selectedDate)
                   : CenterViewModel.getCentresByDistrict(
-                      distId: widget.districtId, date: widget.date),
+                      distId: widget.districtId, date: selectedDate),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   CentresModel cm = snapshot.data;
@@ -426,8 +436,7 @@ class _MyHomePageState extends State<MyHomePage> {
   header() {
      List<String> weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       List<String> month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul','Aug','Sep','Oct','Nov','Dec'];
-    var ymd = widget.date.split('-').reversed.join('-');
-    DateTime dateTime = DateTime.parse(ymd);
+  
     // print(weekday[dateTime.weekday-1]+', '+dateTime.day.toString()+' '+ month[dateTime.month-1]);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -447,17 +456,17 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
-                child: Text("${widget.districtName},",
+                child: Text("${widget.isPin?widget.pin:widget.districtName+','}",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 40,
                       fontWeight: FontWeight.w500,
                     ))),
-            Text(weekday[dateTime.weekday-1]+', '+dateTime.day.toString()+' '+ month[dateTime.month-1],
+            Text(weekday[widget.date.weekday-1]+', '+ month[widget.date.month-1]+' '+widget.date.day.toString(),
                 style: TextStyle(color: Colors.white, fontSize: 20)),
           ],
         ),
-        Text("${widget.stateName}",
+      widget.isPin?Container(): Text("${widget.stateName}",
             style: TextStyle(
               color: Colors.white,
               fontSize: 35,

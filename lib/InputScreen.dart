@@ -20,17 +20,43 @@ class _InputScreenState extends State<InputScreen> {
   TextEditingController controller = TextEditingController(text: "");
 
   GlobalKey<AutoCompleteTextFieldState<StatesModel>> key = new GlobalKey();
-  GlobalKey<AutoCompleteTextFieldState<DistrictBlockModel>> key2 = new GlobalKey();
+  GlobalKey<AutoCompleteTextFieldState<DistrictBlockModel>> key2 =
+      new GlobalKey();
 
-  StatesModel selectedStatesModel = StatesModel(stateName: 'Choose State', stateId: null);
+  StatesModel selectedStatesModel =
+      StatesModel(stateName: 'Choose State', stateId: null);
   // String selectedStateid;
   // String selectedStateName;
-  String selectedDate;
-  String selectDay;
 
-  List<String> weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  // String selectedDate;
+  // String selectDay;
+  DateTime date = DateTime.now();
 
-  DistrictBlockModel selectedDistModel = DistrictBlockModel(districtName: 'Choose District', districtId: null);
+  String getDate(DateTime dateTime) {
+    List<String> month = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+    List<String> weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return weekday[dateTime.weekday - 1] +
+        ', ' +
+        month[dateTime.month - 1] +
+        ' ' +
+        dateTime.day.toString();
+  }
+
+  DistrictBlockModel selectedDistModel =
+      DistrictBlockModel(districtName: 'Choose District', districtId: null);
   // String selectedDistName;
   // String selectedDistId;
   void _loadStates() async {
@@ -56,6 +82,50 @@ class _InputScreenState extends State<InputScreen> {
           physics: AlwaysScrollableScrollPhysics(),
           children: [
             Image.asset('assets/image.png'),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: GestureDetector(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.calendar_today_sharp, color: Colors.white),
+                    Text(
+                      ' ${date != null ? getDate(date) : 'Choose Date'}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    )
+                  ],
+                ),
+                onTap: () async {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                  DateTime datetime = DateTime.now();
+                  datetime = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2021),
+                    lastDate: DateTime(2100),
+                  );
+                  if (datetime != null) {
+                    // var day = (date.day <= 9 ? '0' : '') + date.day.toString();
+                    // var month =
+                    //     (date.month <= 9 ? '0' : '') + date.month.toString();
+                    // selectedDate =
+                    //     day + '-' + month + '-' + date.year.toString();
+                    // // selectDay = weekday[date.weekday - 1];
+                    // print(selectedDate);
+                    date = datetime;
+                  }
+                },
+              ),
+            ),
+
+            SizedBox(
+              height: 30,
+            ),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: DropdownSearch<StatesModel>(
@@ -81,20 +151,25 @@ class _InputScreenState extends State<InputScreen> {
                 showAsSuffixIcons: false,
                 dropDownButton: Icon(Icons.expand_more, color: Colors.white),
                 filterFn: (item, query) {
-                  return item.stateName.toLowerCase().startsWith(query.toLowerCase());
+                  return item.stateName
+                      .toLowerCase()
+                      .startsWith(query.toLowerCase());
                 },
                 popupBackgroundColor: Colors.grey.shade100.withOpacity(0.6),
                 autoValidateMode: AutovalidateMode.onUserInteraction,
                 validator: (u) => u == null ? "State is required " : null,
                 onChanged: (item) async {
-                  selectedStatesModel = StatesModel(stateId: item.stateId, stateName: item.stateName);
+                  selectedStatesModel = StatesModel(
+                      stateId: item.stateId, stateName: item.stateName);
                   setState(() {
                     DistrictViewModel.districts.clear();
-                    selectedDistModel = DistrictBlockModel(districtName: 'Choose District', districtId: null);
+                    selectedDistModel = DistrictBlockModel(
+                        districtName: 'Choose District', districtId: null);
 
                     stateController.text = item.stateName;
                   });
-                  await DistrictViewModel.getDistricts(id: selectedStatesModel.stateId.toString());
+                  await DistrictViewModel.getDistricts(
+                      id: selectedStatesModel.stateId.toString());
                   setState(() {});
                 },
 
@@ -153,7 +228,9 @@ class _InputScreenState extends State<InputScreen> {
                 dropDownButton: Icon(Icons.expand_more, color: Colors.white),
 
                 filterFn: (item, query) {
-                  return item.districtName.toLowerCase().startsWith(query.toLowerCase());
+                  return item.districtName
+                      .toLowerCase()
+                      .startsWith(query.toLowerCase());
                 },
                 // showSelectedItem: true
                 popupBackgroundColor: Colors.grey.shade200.withOpacity(0.6),
@@ -163,7 +240,9 @@ class _InputScreenState extends State<InputScreen> {
 //              onFind: (String filter) => getData(filter),
                 onChanged: (dm) {
                   setState(() {
-                    selectedDistModel = DistrictBlockModel(districtId: dm.districtId, districtName: dm.districtName);
+                    selectedDistModel = DistrictBlockModel(
+                        districtId: dm.districtId,
+                        districtName: dm.districtName);
                   });
                 },
 
@@ -196,44 +275,10 @@ class _InputScreenState extends State<InputScreen> {
 //                        districtBlockModel ?? DistrictViewModel.districts[0],
               ),
             ),
-            SizedBox(height: 30),
+            // SizedBox(height: 30),
             // selectedDistModel.districtId == null
             //     ? Container()
             //     :
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: GestureDetector(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.calendar_today_sharp, color: Colors.white),
-                    Text(
-                      ' ${selectDay ?? ''}, ${selectedDate ?? 'Choose Date'}',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    )
-                  ],
-                ),
-                onTap: () async {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                  DateTime date = DateTime.now();
-                  date = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2021),
-                    lastDate: DateTime(2100),
-                  );
-                  if (date != null) {
-                    var day = (date.day <= 9 ? '0' : '') + date.day.toString();
-                    var month = (date.month <= 9 ? '0' : '') + date.month.toString();
-                    selectedDate = day + '-' + month + '-' + date.year.toString();
-                    selectDay = weekday[date.weekday - 1];
-                  }
-                },
-              ),
-            ),
 
             FlatButton(
               child: Row(
@@ -252,7 +297,7 @@ class _InputScreenState extends State<InputScreen> {
                   )
                 ],
               ),
-              onPressed: selectedDate == null
+              onPressed: date == null
                   ? null
                   : () {
                       Navigator.push(
@@ -260,20 +305,29 @@ class _InputScreenState extends State<InputScreen> {
                           CupertinoPageRoute(
                               builder: (context) => MyHomePage(
                                     stateName: selectedStatesModel.stateName,
-                                    districtName: selectedDistModel.districtName,
-                                    stateId: selectedStatesModel.stateId.toString(),
-                                    districtId: selectedDistModel.districtId.toString(),
-                                    date: selectedDate,
-                                    pin:controller.text,
+                                    districtName:
+                                        selectedDistModel.districtName,
+                                    stateId:
+                                        selectedStatesModel.stateId.toString(),
+                                    districtId:
+                                        selectedDistModel.districtId.toString(),
+                                    date: date,
+                                    pin: controller.text,
                                     isPin: false,
                                   )));
                     },
             ),
 
             Row(mainAxisSize: MainAxisSize.max, children: [
-              Expanded(child: Divider(color: Colors.white.withOpacity(0.6), thickness: 2)),
-              Text("  OR  ", style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 25)),
-              Expanded(child: Divider(color: Colors.white.withOpacity(0.6), thickness: 2)),
+              Expanded(
+                  child: Divider(
+                      color: Colors.white.withOpacity(0.6), thickness: 2)),
+              Text("  OR  ",
+                  style: TextStyle(
+                      color: Colors.white.withOpacity(0.6), fontSize: 25)),
+              Expanded(
+                  child: Divider(
+                      color: Colors.white.withOpacity(0.6), thickness: 2)),
             ]),
             SizedBox(height: 20),
             Padding(
@@ -320,24 +374,27 @@ class _InputScreenState extends State<InputScreen> {
                         )
                       ],
                     ),
-                    onPressed: 
-                      selectedDate == null || controller.text.isEmpty
-                  ? null
-                  : () {
-                      Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) => MyHomePage(
-                                    stateName: selectedStatesModel.stateName,
-                                    districtName: selectedDistModel.districtName,
-                                    stateId: selectedStatesModel.stateId.toString(),
-                                    districtId: selectedDistModel.districtId.toString(),
-                                    date: selectedDate,
-                                    pin: controller.text,
-                                    isPin: true,
-                                  )));
-                    },
-                    
+                    onPressed: date == null || controller.text.isEmpty
+                        ? null
+                        : () {
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) => MyHomePage(
+                                          stateName:
+                                              selectedStatesModel.stateName,
+                                          districtName:
+                                              selectedDistModel.districtName,
+                                          stateId: selectedStatesModel.stateId
+                                              .toString(),
+                                          districtId: selectedDistModel
+                                              .districtId
+                                              .toString(),
+                                          date: date,
+                                          pin: controller.text,
+                                          isPin: true,
+                                        )));
+                          },
                   ),
                 ],
               ),
