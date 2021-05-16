@@ -1,5 +1,6 @@
 import 'package:cowin/Models/CenterModel.dart';
 import 'package:cowin/methods/CenterViewModel.dart';
+import 'package:cowin/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,6 +43,13 @@ class _MyHomePageState extends State<MyHomePage> {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Container(
+        // decoration: BoxDecoration(
+        //     borderRadius: BorderRadius.circular(20),
+        //     image: DecorationImage(
+        //         image: AssetImage(
+        //           'assets/start.jpg',
+        //         ),
+        //         fit: BoxFit.fill)),
         child: Padding(
           padding: const EdgeInsets.only(bottom: 20),
           child: Column(
@@ -114,22 +122,23 @@ class _MyHomePageState extends State<MyHomePage> {
               //TIME SLOTS
 
               Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Slots Available:", style: TextStyle(color: Colors.grey)),
-                      SizedBox(height: 5),
-                      for (int i = 0; i < centerBlockModel.sessions[0].slots.length; i++)
-                        Column(
-                          children: [
-                            SizedBox(height: 2),
-                            Text(centerBlockModel.sessions[0].slots[i]),
-                          ],
-                        ),
-                      SizedBox(height: 2),
-                    ],
-                  )),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Slots Available:", style: TextStyle(color: Colors.grey)),
+                    SizedBox(height: 5),
+                    for (int i = 0; i < centerBlockModel.sessions[0].slots.length; i++)
+                      Column(
+                        children: [
+                          SizedBox(height: 2),
+                          Text(centerBlockModel.sessions[0].slots[i]),
+                        ],
+                      ),
+                    SizedBox(height: 2),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -163,17 +172,17 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        // backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.blueAccent,
 
         body: Stack(
           children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.6,
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(88)),
-              ),
-            ),
+            // Container(
+            //   height: MediaQuery.of(context).size.height * 0.6,
+            //   decoration: BoxDecoration(
+            //     color: Colors.blue,
+            //     borderRadius: BorderRadius.vertical(bottom: Radius.circular(88)),
+            //   ),
+            // ),
             Center(child: Image.asset('assets/image.png')),
             FutureBuilder(
               future: widget.isPin
@@ -190,48 +199,64 @@ class _MyHomePageState extends State<MyHomePage> {
                       header(),
                       SizedBox(height: 25),
                       FilterMenu(),
-                      ListView.builder(
-                          padding: EdgeInsetsDirectional.only(top: 10, bottom: 20),
-                          shrinkWrap: true,
-                          itemCount: cm.centers.length,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, i) {
-                            bool show18 = false;
-                            bool show45 = false;
-                            bool showCovx = false;
-                            bool showCovd = false;
-                            if (cvx) {
-                              if (cm.centers[i].sessions[0].vaccine.toLowerCase().startsWith("covax"))
-                                showCovx = true;
-                              else
-                                showCovx = false;
-                            }
+                      cm.centers.length == 0
+                          ? Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.transparent.withOpacity(0.5),
+                                // Colors.white.withOpacity(0.6),
+                              ),
+                              margin: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+                              padding: EdgeInsets.all(20),
+                              child: Center(
+                                child: Text(
+                                  'No appointments',
+                                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            )
+                          : ListView.builder(
+                              padding: EdgeInsetsDirectional.only(top: 10, bottom: 20),
+                              shrinkWrap: true,
+                              itemCount: cm.centers.length,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, i) {
+                                bool show18 = false;
+                                bool show45 = false;
+                                bool showCovx = false;
+                                bool showCovd = false;
+                                if (cvx) {
+                                  if (cm.centers[i].sessions[0].vaccine.toLowerCase().startsWith("covax"))
+                                    showCovx = true;
+                                  else
+                                    showCovx = false;
+                                }
 
-                            if (cvld) {
-                              if (cm.centers[i].sessions[0].vaccine.toLowerCase().startsWith('covi'))
-                                showCovd = true;
-                              else
-                                showCovd = false;
-                            }
+                                if (cvld) {
+                                  if (cm.centers[i].sessions[0].vaccine.toLowerCase().startsWith('covi'))
+                                    showCovd = true;
+                                  else
+                                    showCovd = false;
+                                }
 
-                            if (_eighteen) {
-                              if (cm.centers[i].sessions[0].minAgeLimit == 18)
-                                show18 = true;
-                              else
-                                show18 = false;
-                            }
+                                if (_eighteen) {
+                                  if (cm.centers[i].sessions[0].minAgeLimit == 18)
+                                    show18 = true;
+                                  else
+                                    show18 = false;
+                                }
 
-                            if (_forty5) {
-                              if (cm.centers[i].sessions[0].minAgeLimit == 45)
-                                show45 = true;
-                              else
-                                show45 = false;
-                            }
-                            if ((show18 || show45) && (showCovd || showCovx))
-                              return myCard(cm.centers[i]);
-                            else
-                              return Container();
-                          }),
+                                if (_forty5) {
+                                  if (cm.centers[i].sessions[0].minAgeLimit == 45)
+                                    show45 = true;
+                                  else
+                                    show45 = false;
+                                }
+                                if ((show18 || show45) && (showCovd || showCovx))
+                                  return myCard(cm.centers[i]);
+                                else
+                                  return Container();
+                              }),
                     ]),
                   );
                 } else
@@ -334,88 +359,94 @@ class _MyHomePageState extends State<MyHomePage> {
   FilterMenu() {
     double borderRadius = 12;
     Color red = Colors.red;
-    Color tnsp = Colors.transparent;
+    Color tnsp = Colors.transparent.withOpacity(0.5);
     Color white = Colors.white;
     Color black = Colors.black;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
-          children: [
-            FlatButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(borderRadius),
-                side: BorderSide(color: _eighteen ? red : white),
-              ),
-              color: _eighteen ? red : tnsp,
-              child: Text("18+", style: TextStyle(color: white, fontWeight: FontWeight.w600)),
-              onPressed: () {
-                _eighteen = !_eighteen;
-                HapticFeedback.lightImpact();
-                setState(() {});
-              },
+    return Container(
+      height: 40,
+
+      // color: Colors.white.withOpacity(0.6),
+      child: ListView(
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          FlatButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              side: BorderSide(color: _eighteen ? red : white),
             ),
-            SizedBox(width: MediaQuery.of(context).size.width * 0.1),
-            FlatButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(borderRadius),
-                side: BorderSide(color: _forty5 ? red : white),
-              ),
-              color: _forty5 ? red : tnsp,
-              child: Text(
-                "45+",
-                style: TextStyle(color: white),
-              ),
-              onPressed: () {
-                _forty5 = !_forty5;
-                HapticFeedback.lightImpact();
-                setState(() {});
-              },
+            color: _eighteen ? red : tnsp,
+            child: Text("18+", style: TextStyle(color: white, fontWeight: FontWeight.w600)),
+            onPressed: () {
+              _eighteen = !_eighteen;
+              HapticFeedback.lightImpact();
+              setState(() {});
+            },
+          ),
+          SizedBox(width: 10),
+          FlatButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              side: BorderSide(color: _forty5 ? red : white),
             ),
-          ],
-        ),
-        Row(
-          children: [
-            FlatButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(borderRadius),
-                side: BorderSide(color: cvx ? red : white),
-              ),
-              color: cvx ? red : tnsp,
-              child: Text(
-                "Covaxin",
-                style: TextStyle(
-                  color: white,
-                ),
-              ),
-              onPressed: () {
-                cvx = !cvx;
-                HapticFeedback.lightImpact();
-                setState(() {});
-              },
+            color: _forty5 ? red : tnsp,
+            child: Text(
+              "45+",
+              style: TextStyle(color: white),
             ),
-            SizedBox(width: MediaQuery.of(context).size.width * 0.1),
-            FlatButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(borderRadius),
-                side: BorderSide(color: cvld ? red : white),
-              ),
-              color: cvld ? red : tnsp,
-              child: Text(
-                "Covishield",
-                style: TextStyle(
-                  color: white,
-                ),
-              ),
-              onPressed: () {
-                cvld = !cvld;
-                HapticFeedback.lightImpact();
-                setState(() {});
-              },
+            onPressed: () {
+              _forty5 = !_forty5;
+              HapticFeedback.lightImpact();
+              setState(() {});
+            },
+          ),
+
+          SizedBox(width: 10),
+          // SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+          FlatButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              side: BorderSide(color: cvx ? red : white),
             ),
-          ],
-        ),
-      ],
+            color: cvx ? red : tnsp,
+            child: Text(
+              "Covaxin",
+              style: TextStyle(
+                color: white,
+              ),
+            ),
+            onPressed: () {
+              cvx = !cvx;
+              HapticFeedback.lightImpact();
+              setState(() {});
+            },
+          ),
+
+          SizedBox(width: 10),
+          // SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+          FlatButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              side: BorderSide(color: cvld ? red : white),
+            ),
+            color: cvld ? red : tnsp,
+            child: Text(
+              "Covishield",
+              style: TextStyle(
+                color: white,
+              ),
+            ),
+            onPressed: () {
+              cvld = !cvld;
+              HapticFeedback.lightImpact();
+              setState(() {});
+            },
+          ),
+          SizedBox(width: 10),
+          // SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+        ],
+      ),
     );
   }
 
@@ -454,13 +485,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       fontSize: 40,
                       fontWeight: FontWeight.w500,
                     ))),
-            Text(
-                weekday[widget.date.weekday - 1] +
-                    ', ' +
-                    month[widget.date.month - 1] +
-                    ' ' +
-                    widget.date.day.toString(),
-                style: TextStyle(color: Colors.white, fontSize: 20)),
+            Text(getDate(widget.date), style: TextStyle(color: Colors.white, fontSize: 20)),
           ],
         ),
         widget.isPin
