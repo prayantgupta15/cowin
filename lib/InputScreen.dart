@@ -98,7 +98,7 @@ class _InputScreenState extends State<InputScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("search By pin code:",
+                  Text("Search By Pin Code:",
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.white,
